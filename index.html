@@ -10,34 +10,29 @@
 
 <style>
 h1{
-	font-size:3rem;
+	font:bold 3rem/0 arial, verdana, sans-serif;
 	text-decoration:underline;
+	text-align:center;
 }
-h2{color:tomato}
+h2{
+	color:seagreen;
+	text-align:center;
+	font-size:1.5rem;
+	font-family:arial, verdana, sans-serif;
+}
 </style>
 
-<style>
-	.custom_zoomcontrol {position:absolute;top:50px;right:10px;width:36px;height:80px;overflow:hidden;z-index:1;background-color:#f5f5f5;}
-	.custom_zoomcontrol span {display:block;width:36px;height:40px;text-align:center;cursor:pointer;}
-	.custom_zoomcontrol span img {width:15px;height:15px;padding:12px 0;border:none;}
-	.custom_zoomcontrol span:first-child{border-bottom:1px solid #bfbfbf;}
-	</style>
 </head>
 
 <body>
 	<h1>DBDB</h1>
-	<h2>담배 database</h2>
+	<h2>dambae database</h2>
 	<form action="">
 		<input type="text">
 	</form>
 
 <div class="map_wrap">
     <div id="map" style="width:1500px;height:750px;"></div> 
-    <!-- 지도 확대, 축소 컨트롤 div 입니다 -->
-    <div class="custom_zoomcontrol radius_border"> 
-        <span onclick="zoomIn()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
-        <span onclick="zoomOut()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
-    </div>
 </div>
 
 <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d747cf91bafdaa611a124e5844accce6"></script>
@@ -50,15 +45,6 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-// 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
-function zoomIn() {
-    map.setLevel(map.getLevel() - 1);
-}
-
-// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
-function zoomOut() {
-    map.setLevel(map.getLevel() + 1);
-}
 </script>
 </body>
 </html>
