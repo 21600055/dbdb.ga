@@ -20,20 +20,13 @@ h2{
 	font-size:1.5rem;
 	font-family:arial, verdana, sans-serif;
 }
-#search{
+
+#search{ /*검색창 버튼 가운데 정렬*/
 display:block;
 margin:0 auto;
 width:600px;
 height:20px;
 }
-
-#button{
-display:block;
-margin:0 auto;
-width:600px;
-height:20px:
-}
-
 </style>
 
 </head>
@@ -41,19 +34,19 @@ height:20px:
 <body>
 	<h1>DBDB</h1>
 	<h2>dambae database</h2>
-	<form class = "search"> <script>/*검색창과 검색버튼 */</script>
+	<form class = "search"> <script>/*검색창과 검색버튼폼 */</script>
 		<input class="keyword" id="search" type="text" name="search" maxlength=255 value="" autocomplete="off">
-		<input type="button" id="button" value="검색" onclick="input()">
+		<input type="button" id="search" value="검색" onclick="input()">
 	</form>
 
-<div class="map_wrap">
+<div class="map_wrap"> <script>/*맵사이즈*/</script>
     <div id="map" style="width:1500px;height:750px;"></div> 
 </div>
 
-<script> //클릭시 이벤트 작동
+<script language="javascript"> //클릭시 이벤트 작동 함수
 var temp;
-	
-	function input(){
+
+	function input(){ //검색 버튼 누룰시 작동하는 함수
 		var input = document.getElementById("search").value;
 		if(input==""){
 			temp = "검색할 값 입력";
@@ -63,15 +56,14 @@ var temp;
 			alert(temp);
 		}
 	}
-
-	function nil(){
+	function nil(){//검색 창에 아무것도 입력 안했을때 작동하는 함수
 		alert(temp);
 	}
-
 </script>
 
 <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d747cf91bafdaa611a124e5844accce6"></script>
-<script>
+
+<script> //지도 생성script
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
         center: new kakao.maps.LatLng(36.103388, 129.388348), // 지도의 중심좌표
@@ -79,7 +71,7 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
     };  
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
 </script>
+
 </body>
 </html>
