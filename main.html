@@ -43,35 +43,55 @@ height:20px;
     <div id="map" style="width:1500px;height:750px;"></div> 
 </div>
 
-<script language="javascript"> //클릭시 이벤트 작동 함수
-var temp;
+<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d747cf91bafdaa611a124e5844accce6"></script>
+
+<script> //지도 생성script
+ 
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+	 mapOption = {
+	 	center: new kakao.maps.LatLng(36.103388, 129.388348), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+     };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+//클릭시 이벤트 작동 부분
+var temp; // 검색창에서 입력된내용 담는 변수
+var x=36.103388; //마커 x좌표
+var y=129.388348;//마커 y좌표
+var markerPosition  = new kakao.maps.LatLng(x,y); 
+var marker = new kakao.maps.Marker({
+    position: markerPosition
+});
 
 	function input(){ //검색 버튼 누룰시 작동하는 함수
 		var input = document.getElementById("search").value;
 		if(input==""){
-			temp = "검색할 값 입력";
-			nil();
+			alert("검색할값 입력");
+			marker.setMap(null);
 		} else{
-			temp = input;
-			alert(temp);
+			//temp = input;
+			dbconn();
+			marker.setMap(map);
 		}
 	}
-	function nil(){//검색 창에 아무것도 입력 안했을때 작동하는 함수
-		alert(temp);
+
+	function dbconn(){
+		
+		var mysql= require('mysql');
+		var connection = mysql.createConnection({
+			host:'db-term-project.ckytyidjqphd.ap-northeast-2.rds.amazonaws.com',
+			user:'admin',
+			password:'handong1'
+		});
+
+		connection.connect();
+		connection.query('use term_project');
+		var position=connection.query('SELECT name FROM nonsmoking WHERE id=2');
+		alert(position);
+		connection.end();
 	}
+
 </script>
-
-<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d747cf91bafdaa611a124e5844accce6"></script>
-
-<script> //지도 생성script
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = { 
-        center: new kakao.maps.LatLng(36.103388, 129.388348), // 지도의 중심좌표
-        level: 3 // 지도의 확대 레벨
-    };  
-
-var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-</script>
-
 </body>
 </html>
