@@ -70,10 +70,17 @@ var marker = new kakao.maps.Marker({
 			alert("검색할값 입력");
 			marker.setMap(null);
 		} else{
-			//temp = input;
-			dbconn();
+			temp = input;
+//			dbconn();			
 			marker.setMap(map);
+			panTO();
 		}
+	}
+
+	function panTO(){
+
+		var moveLatlon = new kakao.maps.LatLng(x,y);
+		map.panTo(moveLatlon);
 	}
 
 	function dbconn(){
