@@ -40,7 +40,34 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
 	};  
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+function get_no_adr(){
+           $.ajax({
+                   type: "POST",
+                   url:"ubuntu@13.124.171.99/getNoAdr.json",
+                   datatype:"json",
+                   success:function(element){
+                   console.log(element[0].id);
+                                   },
+          error:function(request,status,error){
+        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+       	}
 
+	});      
+  }   
+function get_s_adr(){
+           $.ajax({
+                   type: "POST",
+                   url:"ubuntu@13.124.171.99/getSAdr.json",
+                   datatype:"json",
+                   success:function(element){
+                   console.log(element[0].id);
+                                   },
+          error:function(request,status,error){
+        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+       	}
+
+	});      
+  }
 </script>
 </body>
 </html>
