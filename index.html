@@ -1,73 +1,209 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shirink-to-fit=no">
-	<meta name="description" content="">
-	<meta name="author" content="">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shirink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-	<title>다음 지도</title>
+        <title>DBDB</title>
 
 <style>
 h1{
-	font:bold 3rem/0 arial, verdana, sans-serif;
-	text-decoration:underline;
-	text-align:center;
+        font:bold 3rem/0 arial, verdana, sans-serif;
+        text-decoration:underline;
+        text-align:center;
 }
 h2{
-	color:seagreen;
-	text-align:center;
-	font-size:1.5rem;
-	font-family:arial, verdana, sans-serif;
+        color:seagreen;
+        text-align:center;
+        font-size:1.5rem;
+        font-family:arial, verdana, sans-serif;
+}
+
+#search{ /*검색창 버튼 가운데 정렬*/
+display:block;
+margin:0 auto;
+width:600px;
+height:20px;
 }
 </style>
+
 </head>
 
 <body>
-	<h1>DBDB</h1>
-	<h2>dambae database</h2>
-
-<div class="map_wrap">
-    <div id="map" style="width:1500px;height:750px;"></div> 
+        <h1>DBDB</h1>
+        <h2>dambae database</h2>
+        <form class = "search"> <script>/*검색창과 검색버튼폼 */</script>
+                <h2><input type="radio" name="dambae" value="금연구역" checked="checked"> 금연구역
+                        <input type="radio" name="dambae" value="흡연구역"> 흡연구역
+                </h2>
+                <input class="keyword" id="search" type="text" name="search" maxlength=255 value="" autocomplete="off">
+                <input type="button" id="search" value="검색" onclick="input()">
+        </form>
+<div class="map_wrap"> <script>/*맵사이즈*/</script>
+    <div id="map" style="width:1500px;height:750px;"></div>
 </div>
 
-<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d747cf91bafdaa611a124e5844accce6"></script>
-<script>
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = { 
-        center: new kakao.maps.LatLng(36.103388, 129.388348), // 지도의 중심좌표
-        level: 3, // 지도의 확대 레벨
-	};  
+<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=b2f7aa74ec84efdcfc000d5cd2940038"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+<script type="text/javascript"> //지도 생성script
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+         mapOption = {
+                center: new kakao.maps.LatLng(36.103388, 129.388348), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+     };
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-function get_no_adr(){
-           $.ajax({
-                   type: "POST",
-                   url:"ubuntu@13.124.171.99/getNoAdr.json",
-                   datatype:"json",
-                   success:function(element){
-                   console.log(element[0].id);
-                                   },
-          error:function(request,status,error){
-        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-       	}
 
-	});      
-  }   
-function get_s_adr(){
-           $.ajax({
-                   type: "POST",
-                   url:"ubuntu@13.124.171.99/getSAdr.json",
-                   datatype:"json",
-                   success:function(element){
-                   console.log(element[0].id);
-                                   },
-          error:function(request,status,error){
-        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-       	}
+//클릭시 이벤트 작동 부분
+var temp; // 검색창에서 입력된내용 담는 변수
+var name; //데이터 베이스에 접속하여 가져올 값들
+var divide;
+var detail;
+var x=36.103388; //마커 x좌표
+var y=129.388348;//마커 y좌표
 
-	});      
-  }
+var markerPosition = new kakao.maps.LatLng(x,y);
+var marker= new kakao.maps.Marker({
+   position: markerPosition
+});
+
+var radio_btn = document.getElementsByName("dambae"); //라디오 버튼관련 부분
+var radio_value;
+
+var a="test for info box"; //info box 내용물
+
+var iwContent='<div style-"padding:5px;">'+a+'</div>',
+        iwPosition= new kakao.maps.LatLng(x,y);
+var infowindow= new kakao.maps.InfoWindow({
+position: iwPosition,
+content: iwContent
+});
+
+	        function input(){ //검색 버튼 누룰시 작동하는 함수
+                var input = document.getElementById("search").value;
+                temp = input;
+                radio();
+                if(input==""){
+                        marker.setMap(null);
+                        infowindow.close(map,marker);
+                } else{
+                        if(radio_value=="금연구역"){
+                                get_no_adr();  //금연구역 일때 정보 답아오기
+                        } else{
+                                get_s_adr(); //흡연 구역 정보 받아오기
+                        }
+                        alert(name+", "+divide+", "+detail);
+                        Mark();
+                        Text();
+                        marker.setMap(map);
+                        infowindow.open(map,marker);
+                        panTO();
+                }
+        }
+
+        function Text(){ //infowindow 설정 함수
+                a="name: "+name+"\n"+"divide: "+divide+"\n"+"detail: "+detail; //info box 내용물
+            iwContent='<div style-"padding:5px;">'+a+'</div>',
+        iwPosition= new kakao.maps.LatLng(x,y);
+                infowindow= new kakao.maps.InfoWindow({
+                 position: iwPosition,
+                 content: iwContent
+                 });
+
+        }
+
+        function Mark(){ // 마커 설정 함수
+           markerPosition = new kakao.maps.LatLng(x,y);
+           marker= new kakao.maps.Marker({
+        position: markerPosition
+            });
+        }
+
+	        function radio(){  //라디오 값 읽어오는 함수
+                radio_btn = document.getElementsByName("dambae");
+                for(var i=0;i<radio_btn.length;i++){
+                        if(radio_btn[i].checked==true){
+                                radio_value = radio_btn[i].value;
+                        }
+                }
+        }
+
+        function panTO(){ //검색한 좌표로 이동
+
+                var moveLatlon = new kakao.maps.LatLng(x,y);
+                map.panTo(moveLatlon);
+        }
+
+        function get_no_adr(){
+                $.ajax({
+                     type: "POST",
+                     url:"ubuntu@13.124.171.99/getNoAdr.json",
+                     datatype:"json",
+                     success:function(element){
+
+                             for(var i=0;i<element.length;i++){
+                                     if(temp==element[i].name){
+                                             name=element[i].name;
+                                             divide=element[i].divide;
+                                             detail=element[i].detail;
+                                     }
+                             }
+                     },
+                    error:function(request,status,error){
+                     alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    }
+                });
+        }
+
+	
+        function get_no_adr(){
+                $.ajax({
+                     type: "POST",
+                     url:"ubuntu@13.124.171.99/getNoAdr.json",
+                     datatype:"json",
+                     success:function(element){
+
+                             for(var i=0;i<element.length;i++){
+                                     if(temp==element[i].name){
+                                             name=element[i].name;
+                                             divide=element[i].divide;
+                                             detail=element[i].detail;
+                                     }
+                             }
+                     },
+                    error:function(request,status,error){
+                     alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    }
+                });
+        }
+
+        function get_s_adr(){
+             $.ajax({
+                     type: "POST",
+                     url:"ubuntu@13.124.171.99/getSAdr.json",
+                     datatype:"json",
+                     success:function(element){
+
+                             for(var i=0;i<element.length;i++){
+                                     if(temp==element[i].name){
+                                             name=element[i].name;
+                                             divide=element[i].divide;
+                                     }
+                             }
+                    },
+                    error:function(request,status,error){
+                        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    }
+
+            });
+        }
+
+
 </script>
 </body>
 </html>
